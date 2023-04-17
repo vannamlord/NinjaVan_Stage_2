@@ -1,0 +1,11 @@
+#!/bin/bash
+[Desktop Entry]
+Type=Application
+Exec=gnome-terminal --working-directory=/home/admin1/Desktop/install/ -x bash -c "bash /home/admin1/Desktop/install/run.sh"
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name[en_NG]=Auto-run Collect
+Name=Auto-run Collect
+Comment[en_NG]=Auto run Collect and Control device
+Comment=Auto run Collect and Control device
