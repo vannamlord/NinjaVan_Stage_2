@@ -1,7 +1,5 @@
 init_timer_dws = 7200
 init_timer_enet = 180
-init_open = 10
-init_close = 2
 init_time_rsl = 0.2
 init_count = 10
 init_thresh_weight = 50
