@@ -13,6 +13,10 @@ import psutil
 from tkinter import *
 
 ################################################################################
+# Run checking internet and memory
+subprocess.call(["gnome-terminal", "--working-directory=/home/admin1/Desktop/testapp/",
+                 "-x", "bash", "-c", "python3 checking_status.py"])
+################################################################################
 # Close connection of localhost port
 try:
     pid_ter = subprocess.run(
@@ -77,10 +81,6 @@ except:
 
     list_tid = ['A', 'B', 'C']
 ################################################################################
-#Run checking internet and memory
-checking_status = subprocess.run(
-    ['checking_status.py'], shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
-################################################################################
 
 check_weight_done = False
 init_weight = 0
@@ -102,9 +102,6 @@ data_check_sta = False
 ################################################################################
 # Network_TCP
 # FROM COLLECT TOOL
-# Listen signal
-bufferSize = 1024
-################################################################################
 # Local host infomation
 HOST = "127.0.0.1"
 PORT = 3000
@@ -147,7 +144,9 @@ def control_dws(sta):
         try:
             open = subprocess.Popen(["ninjavan"])
         except:
-            print("execute ninjavan err")
+            log_issue(
+                '->' + ' ' + str(datetime.datetime.now()) + ' ' + 'Err Open DWS')
+            # print("execute ninjavan err")
     else:
         try:
             for pid in (process.pid for process in psutil.process_iter() if process.name() == "electron"):
@@ -155,7 +154,9 @@ def control_dws(sta):
             for pid in (process.pid for process in psutil.process_iter() if process.name() == "node"):
                 os.kill(pid, signal.SIGTERM)
         except Exception as e:
-            print("close ninjavan err ", e)
+            log_issue(
+                '->' + ' ' + str(datetime.datetime.now()) + ' ' + 'Err Close DWS' + str(e))
+            # print("close ninjavan err ", e)
 
 
 def need_close_dws():
@@ -213,6 +214,20 @@ def checking_mes_UI(data, sta):
             alarm_ui.mainloop()
 
 ################################################################################
+# Log error
+
+
+def log_issue(data):
+    f = open("log_issue.txt", "a")
+    f.write(data)
+    f.close()
+
+
+def log_time_open():
+    f = open("log_time_open.txt", "a")
+    f.write('->' + ' ' + str(datetime.datetime.now()) + ' '+'Started')
+    f.close()
+################################################################################
 
 
 def recv_camera(weight_sta, init_cam_lenght, init_cam_width, init_cam_height, init_thresh_cam):
@@ -225,11 +240,13 @@ def recv_camera(weight_sta, init_cam_lenght, init_cam_width, init_cam_height, in
             mes_recv_CAM = client.recv(1024).decode(FORMAT)
             client.close()
     except:
-        time.sleep(3)
+        log_issue(
+            '->' + ' ' + str(datetime.datetime.now()) + ' ' + 'Err Get data Camera')
+        time.sleep(1)
         pos = False
         need_close_sta = True
     if (mes_recv_CAM.split(';')[0] == 'volumeNum=0'):
-        time.sleep(3)
+        time.sleep(2)
         got_check = False
         pos = False
         need_close_sta = True
@@ -248,6 +265,8 @@ def recv_camera(weight_sta, init_cam_lenght, init_cam_width, init_cam_height, in
                 arr_data_convert[d] = round(
                     data_1/10, 3)
         except:
+            log_issue(
+                '->' + ' ' + str(datetime.datetime.now()) + ' ' + 'Err validate data Camera')
             arr_data_convert = [
                 0.0000, 0.0000, 0.0000]
         upper_lenght = init_cam_lenght + init_thresh_cam
@@ -288,6 +307,8 @@ def read_indicator(init_count, init_time_rsl, init_weight, init_thresh_weight):
             arr_data.append(data_handle)
             count_get_sample = count_get_sample + 1
         except:
+            log_issue(
+                '->' + ' ' + str(datetime.datetime.now()) + ' ' + 'Err Get data Indicator')
             weight_sta = True
     try:
         for x in arr_data:
@@ -301,6 +322,8 @@ def read_indicator(init_count, init_time_rsl, init_weight, init_thresh_weight):
         else:
             weight_sta = True
     except:
+        log_issue(
+            '->' + ' ' + str(datetime.datetime.now()) + ' ' + 'Err Compare data Indicator')
         weight_sta = False
     init_time()
     time.sleep(1)
@@ -325,13 +348,13 @@ def control_data_recv(mes_recv_sta):
     global packing_1, packing_2, packing_3, got_check,\
         init_count, init_time_rsl, init_weight, init_thresh_weight, weight_sta,\
         list_tid, data_check_sta
-    if (mes_recv_sta == 'A'):
+    if (mes_recv_sta == 'VNDWSDIM006') or (mes_recv_sta == 'A'):
         confirm_packing(
             packing_1)
-    elif (mes_recv_sta == 'B'):
+    elif (mes_recv_sta == 'VNDWSDIM007'):
         confirm_packing(
             packing_2)
-    elif (mes_recv_sta == 'C'):
+    elif (mes_recv_sta == 'VNDWSDIM008'):
         confirm_packing(
             packing_3)
     elif (mes_recv_sta == 'SKIP'):
@@ -385,11 +408,14 @@ def socket_recv():
                                                 recv_camera(
                                                     weight_sta, init_cam_lenght, init_cam_width, init_cam_height, init_thresh_cam)
                             except:
-                                donothing = True
+                                log_issue(
+                                    '->' + ' ' + str(datetime.datetime.now()) + ' ' + 'Err Get data Collect')
                 except:
-                    donothing = True
+                    log_issue('->' + ' ' + str(datetime.datetime.now()) + ' ' +
+                              'Err Make Connection Collect')
     except:
-        donothing = True
+        log_issue('->' + ' ' + str(datetime.datetime.now()) + ' ' +
+                  'Err Make Socket Collect')
 
 ################################################################################
 
@@ -399,3 +425,5 @@ thread_check_main.start()
 
 thread_check_time = threading.Thread(target=time_check_DWS)
 thread_check_time.start()
+
+log_time_open()

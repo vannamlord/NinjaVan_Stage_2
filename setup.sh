@@ -1,5 +1,5 @@
 #!/bin/bash
-gnome-terminal --working-directory=/home/ubuntu/Desktop/ -x bash -c " \
+gnome-terminal --working-directory=/home/admin1/Desktop/ -x bash -c " \
     sudo apt install speedtest-cli;sleep 1; \
     sudo gzip -k9 /usr/lib/python3/dist-packages/speedtest.py; sleep 1; \
     sudo wget https://raw.githubusercontent.com/sivel/speedtest-cli/v2.1.3/speedtest.py \
