@@ -7,5 +7,5 @@ NoDisplay=false
 X-GNOME-Autostart-enabled=true
 Name[en_NG]=Auto-run Collect
 Name=Auto-run Collect
-Comment[en_NG]=Auto run Collect and Control device
-Comment=Auto run Collect and Control device
+Comment[en_NG]=Auto run Collect and CD
+Comment=Auto run Collect and CD

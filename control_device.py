@@ -223,9 +223,10 @@ def log_issue(data):
     f.close()
 
 
-def log_time_open():
+def log_time_open(data):
     f = open("log_time_open.txt", "a")
-    f.write('->' + ' ' + str(datetime.datetime.now()) + ' '+'Started')
+    f.write('->' + ' ' + str(datetime.datetime.now()) + ' '+data)
+    f.write("\n")
     f.close()
 ################################################################################
 
@@ -363,6 +364,9 @@ def control_data_recv(mes_recv_sta):
     elif (mes_recv_sta == 'RESET01'):
         subprocess.run(
             ["shutdown", "-r", "now"])
+        log_time_open('Reset IPC')
+    elif (mes_recv_sta == 'POWEROFF'):
+        log_time_open('Shutdown IPC')
     else:
         if not data_check_sta:
             got_check = True
@@ -426,4 +430,4 @@ thread_check_main.start()
 thread_check_time = threading.Thread(target=time_check_DWS)
 thread_check_time.start()
 
-log_time_open()
+log_time_open('Started')

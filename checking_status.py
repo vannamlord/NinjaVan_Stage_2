@@ -44,43 +44,65 @@ wifi_connecting = False
 
 
 def enet_mes_UI(data, sta):
-    global enet_ui
-    enet_ui = Tk()
-    enet_ui.title('Message from DWS Record')
-    enet_ui.geometry("775x140+100+200")
-    if ('Connecting' in data):
-        enet_ui.configure(background='yellow')
-        mes_txt = Label(enet_ui, text=data, font=(
-            'Arial Black', 30), background='yellow')
+    if('Không có mạng-Dừng sử dụng!' in data):
+        enet_ui = Tk()
+        enet_ui.title('Message')
+        enet_ui.attributes('-fullscreen', True)
+        enet_ui.configure(background='red')
+        mes_ui_4 = Label(enet_ui, text="               ", font=(
+        'Arial Black', 30, "bold"), background='red')
+        mes_ui_4.pack()
+        mes_ui_1 = Label(enet_ui, text='THÔNG BÁO', font=(
+            'Arial Black', 70), background='red')
+        mes_ui_1.pack()
+        mes_ui_3 = Label(enet_ui, text="               ", font=(
+            'Arial Black', 400, "bold"), background='red')
+        mes_ui_3.pack()
+        mes_ui_2 = Label(enet_ui, text=data, font=(
+            'Arial Black', 70), background='red')
+        mes_ui_2.pack(fill='both', expand=True)
+
+        enet_ui.after(10000, lambda: enet_ui.destroy())
+        enet_ui.mainloop()
     else:
-        if (sta):
-            enet_ui.configure(background='green')
+        enet_ui = Tk()
+        enet_ui.title('Message')
+        enet_ui.geometry("775x140+100+200")
+        if ('Connecting' in data):
+            enet_ui.configure(background='yellow')
             mes_txt = Label(enet_ui, text=data, font=(
-                'Arial Black', 30), background='green')
+                'Arial Black', 30), background='yellow')
         else:
-            enet_ui.configure(background='red')
-            mes_txt = Label(enet_ui, text=data, font=(
-                'Arial Black', 60), background='red')
-    mes_txt.pack(fill='both', expand=True)
-    enet_ui.after(3000, lambda: enet_ui.destroy())
-    enet_ui.mainloop()
+            if (sta):
+                enet_ui.configure(background='green')
+                mes_txt = Label(enet_ui, text=data, font=(
+                    'Arial Black', 30), background='green')
+            else:
+                enet_ui.configure(background='red')
+                mes_txt = Label(enet_ui, text=data, font=(
+                    'Arial Black', 60), background='red')
+        mes_txt.pack(fill='both', expand=True)
+        enet_ui.after(3000, lambda: enet_ui.destroy())
+        enet_ui.mainloop()
 
 
 def memory_mes_UI(data):
-    global memory_ui
     memory_ui = Tk()
-    memory_ui.title('Message from DWS Record')
+    memory_ui.title('Message')
     memory_ui.attributes('-fullscreen', True)
     memory_ui.configure(background='red')
-    mes_ui_1 = Label(memory_ui, text=data, font=(
-        'Arial Black', 100), background='red')
+    mes_ui_4 = Label(memory_ui, text="               ", font=(
+        'Arial Black', 30, "bold"), background='red')
+    mes_ui_4.pack()
+    mes_ui_1 = Label(memory_ui, text='THÔNG BÁO', font=(
+        'Arial Black', 70), background='red')
     mes_ui_1.pack()
     mes_ui_3 = Label(memory_ui, text="               ", font=(
-        'Arial Black', 200, "bold"), background='red')
+        'Arial Black', 400, "bold"), background='red')
     mes_ui_3.pack()
-    mes_ui_2 = Label(memory_ui, text="Refreshing Data", font=(
-        'Arial Black', 150, "bold"), background='red')
-    mes_ui_2.pack()
+    mes_ui_2 = Label(memory_ui, text=data, font=(
+        'Arial Black', 100), background='red')
+    mes_ui_2.pack(fill='both', expand=True)
 
     memory_ui.after(60000, lambda: memory_ui.destroy())
     memory_ui.mainloop()
@@ -120,8 +142,8 @@ def verify_interrupt_sta():
             raise Exception
     except Exception:
         wifi_connecting = True
-        enet_mes_UI(
-            'Connecting to Wifi, Please wait', True)
+        # enet_mes_UI(
+        #     'Connecting to Wifi, Please wait', True)
 
 
 def get_speed_net():
@@ -150,7 +172,7 @@ def get_speed_net():
                                stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
                 LAN_to_wifi = False
                 time.sleep(10)
-                enet_mes_UI('LAN network is Back', True)
+                # enet_mes_UI('LAN network is Back', True)
             print('Internet is good: Speed ' +
                   str(get_speed) + 'Mbit/s')
             time.sleep(init_timer_enet)
@@ -167,7 +189,7 @@ def get_speed_net():
                         shell=True
                     ).decode('utf-8')
                     verify_wifi_sta()
-                    enet_mes_UI('NinjaVan Wifi has connected', True)
+                    # enet_mes_UI('NinjaVan Wifi has connected', True)
                 except Exception:
                     try:
                         resfresh_wifi()
@@ -177,9 +199,9 @@ def get_speed_net():
                             shell=True
                         ).decode('utf-8')
                         verify_wifi_sta()
-                        enet_mes_UI('4G Wifi has connected', True)
+                        # enet_mes_UI('4G Wifi has connected', True)
                     except Exception:
-                        enet_mes_UI('Network is Crash', False)
+                        enet_mes_UI('Không có mạng-Dừng sử dụng!', False)
 
 
 def Alarm_free_space():
@@ -194,7 +216,7 @@ def Alarm_free_space():
         free_use = float(free_use)
         if (free_use < init_space):
             # print('Disk in Alarm')
-            memory_mes_UI('Disk in Alarm')
+            memory_mes_UI('Ổ đĩa đầy')
         else:
             print('Still able in using (Free in use: ' + available_space + ')')
         time.sleep(init_timer_space)

@@ -7,4 +7,5 @@ gnome-terminal --working-directory=/home/admin1/Desktop/ -x bash -c " \
     sudo apt install python3-tk;sleep 1; \
     sudo pip install psutil; sleep 1; \
     sudo pip install pyserial;sleep 1; \
+    sudo apt-get update; sleep 1; \
     cp -i /home/admin1/Desktop/dws_record/auto-start-setup.desktop ~/.config/autostart"
